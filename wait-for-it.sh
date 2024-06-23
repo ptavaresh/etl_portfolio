@@ -3,7 +3,7 @@
 # This script waits for multiple TCP connections to be ready
 # Usage: wait-for-it.sh host:port ... [-t timeout] [-- command args]
 
-TIMEOUT=30
+TIMEOUT=50000
 QUIET=0
 HOSTS=()
 
