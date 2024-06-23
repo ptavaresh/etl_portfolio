@@ -1,0 +1,4 @@
+FROM mysql:8
+
+# Puedes añadir configuraciones adicionales aquí si es necesario
+COPY schema_mysql.sql /docker-entrypoint-initdb.d/

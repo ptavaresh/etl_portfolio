@@ -1,0 +1,4 @@
+FROM postgres:13
+
+# Copia el archivo schema.sql en el directorio de inicialización de Docker
+COPY schema.sql /docker-entrypoint-initdb.d/
