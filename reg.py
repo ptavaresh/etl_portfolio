@@ -55,7 +55,7 @@ if __name__ == "__main__":
     data = {
         'A': [1, 2, None, 4, 4],
         'B': ['a', 'b', 'b', 'c', None],
-        'C': ['1.1', '2.2 text', '3.3', 'remove4.4', '5.5']
+        'C': ['11', '2.2 text', '3.3', 'remove4.4', '5.5']
     }
     df = pd.DataFrame(data)
 
@@ -71,8 +71,8 @@ if __name__ == "__main__":
     cleaned_df = (cleaner
                   .remove_missing_values(strategy='fill', fill_value=0)
                   .remove_duplicates()
-                  .convert_data_types({'A': 'int64', 'C': 'float64'})
                   .apply_regex_to_columns(regex_patterns)
+                  .convert_data_types({'A': 'int64', 'C': 'float64'})
                   .get_cleaned_data())
 
     # Print the cleaned DataFrame
