@@ -26,21 +26,21 @@ class Busboy:
 
     def apply_regex_to_columns(self, regex_list: dict):
         """
-        Apply a list of regex patterns to the DataFrame columns.
+        Apply a list of regex patterns to the DataFrame columns based on column data type.
 
         Parameters:
-        regex_list (dict): A dictionary where keys are column names and values are lists of regex patterns.
+        regex_list (dict): A dictionary where keys are data types and values are lists of regex patterns.
         """
-        for column, patterns in regex_list.items():
-            if column in self.df.columns:
+        for column in self.df.columns:
+            column_type = str(self.df[column].dtype)
+            if column_type in regex_list:
+                patterns = regex_list[column_type]
                 for i, value in enumerate(self.df[column]):
                     for pattern in patterns:
                         if pd.notnull(value) and re.search(pattern, str(value)):
                             self.df.at[i, column] = re.sub(pattern, '', str(value))
                             self.regex_application_count[column] += 1
-                            #break  # First regex match wins
-            else:
-                raise ValueError(f"Column '{column}' not found in DataFrame")
+                            break  # First regex match wins
         return self
 
     def get_cleaned_data(self):
@@ -55,7 +55,10 @@ if __name__ == "__main__":
     data = {
         'A': [1, 2, None, 4, 4],
         'B': ['a', 'b', 'b', 'c', None],
-        'C': ['11', '2.2 text', '3.3', 'remove4.4', '5.5']
+        'C': ['1.1', '2.2 text', '3.3', 'remove4.4', '5.5'],
+        'D': [pd.Timestamp('20230101'), pd.Timestamp('20230201'), None, pd.Timestamp('20230301'), pd.Timestamp('20230401')],
+        'E': [True, False, True, False, None],
+        'F': [pd.Timestamp('20230101'), pd.Timestamp('20230201'), None, pd.Timestamp('20230301'), pd.Timestamp('20230401')],
     }
     df = pd.DataFrame(data)
 
@@ -64,7 +67,11 @@ if __name__ == "__main__":
 
     # Define regex patterns to apply
     regex_patterns = {
-        'C': [r'\D']  # Remove non-digit characters from column 'C'
+        'object': [r'\D'],  # Remove non-digit characters for object columns
+        'float64': [r'[^\d.]'],  # Remove non-digit characters except dot for float columns
+        'int64': [r'\D'],  # Remove non-digit characters for int columns
+        'datetime64[ns]': [r'.*'],  # Replace all content in datetime columns
+        'bool': [r'False']  # Remove 'False' for boolean columns
     }
 
     # Clean the DataFrame
