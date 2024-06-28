@@ -47,7 +47,7 @@ docker-compose up --build
 Verificar la Conexión y Transferencia de Datos
 El contenedor app esperará a que mysql y postgres estén listos antes de ejecutar el script app.py, que transferirá los datos de PostgreSQL a MySQL.
 
-Notas
+### Notas
 Asegúrate de que los scripts schema_mysql.sql y schema.sql están correctamente configurados para inicializar las bases de datos con las tablas necesarias.
 Puedes modificar los archivos de configuración en el directorio config según tus necesidades.
 ¡Listo! Ahora tienes un proyecto de integración de bases de datos documentado y configurado para ejecutarse con Docker Compose.
