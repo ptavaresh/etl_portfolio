@@ -6,6 +6,7 @@ class Busboy:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.regex_application_count = defaultdict(int)
+        self.change_report = pd.DataFrame(columns=['Row', 'Column', 'Regex Pattern'])
 
     def remove_missing_values(self, strategy='drop', fill_value=None):
         if strategy == 'drop':
@@ -55,9 +56,24 @@ class Busboy:
                     if pd.notnull(value):
                         matched, pattern = self.match_regex_patterns(str(value), patterns)
                         if matched:
-                            self.df.at[i, column] = re.sub(pattern, '', str(value))
+                            original_value = str(value)
+                            new_value = re.sub(pattern, '', original_value)
+                            self.df.at[i, column] = new_value
                             self.regex_application_count[column] += 1
+                            self.log_change(i, column, pattern)
         return self
+
+    def log_change(self, row, column, pattern):
+        """
+        Log changes made by the regex application.
+
+        Parameters:
+        row (int): The row index where the change occurred.
+        column (str): The column name where the change occurred.
+        pattern (str): The regex pattern applied.
+        """
+        change_record = {'Row': row, 'Column': column, 'Regex Pattern': pattern}
+        self.change_report = self.change_report.append(change_record, ignore_index=True)
 
     def get_cleaned_data(self):
         return self.df
@@ -65,16 +81,18 @@ class Busboy:
     def get_regex_application_count(self):
         return dict(self.regex_application_count)
 
+    def get_change_report(self):
+        return self.change_report
+
 # Usage example:
 if __name__ == "__main__":
     # Sample DataFrame
     data = {
-        'A': [1, '2ss', None, 4, 4],
+        'A': [1, 2, None, 4, 4],
         'B': ['a', 'b', 'b', 'c', None],
         'C': ['1.1', '2.2 text', '3.3', 'remove4.4', '5.5'],
         'D': [pd.Timestamp('20230101'), pd.Timestamp('20230201'), None, pd.Timestamp('20230301'), pd.Timestamp('20230401')],
-        'E': [True, False, True, False, None],
-        'F': [1, 233, 4822, 4, 75],
+        'E': [True, False, True, False, None]
     }
     df = pd.DataFrame(data)
 
@@ -103,3 +121,6 @@ if __name__ == "__main__":
 
     # Print regex application count
     print(cleaner.get_regex_application_count())
+
+    # Print change report
+    print(cleaner.get_change_report())
