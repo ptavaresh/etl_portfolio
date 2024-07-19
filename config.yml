@@ -1,0 +1,11 @@
+regex_patterns:
+  object:
+    - '\\D'  # Remove non-digit characters for object columns
+  float64:
+    - '[^\\d.]'  # Remove non-digit characters except dot for float columns
+  int64:
+    - '\\D'  # Remove non-digit characters for int columns
+  datetime64[ns]:
+    - '.*'  # Replace all content in datetime columns
+  bool:
+    - 'False'  # Remove 'False' for boolean columns
