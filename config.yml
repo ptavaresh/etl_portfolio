@@ -9,3 +9,7 @@ regex_patterns:
     - '.*'  # Replace all content in datetime columns
   bool:
     - 'False'  # Remove 'False' for boolean columns
+
+scan_patterns:
+  - '\d+'         # Regex to find any digit
+  - "[a-z]"       # Regex to find any lowercase letter
