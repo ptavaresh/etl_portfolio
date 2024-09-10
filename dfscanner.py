@@ -11,6 +11,7 @@ def load_config(config_path='config.yml'):
 def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description='Process a DataFrame using DFScanner.')
+    parser.add_argument('-file', required=True, help='Path to the CSV file to load into DataFrame')
     parser.add_argument('-scan', action='store_true', help='Run scan_values function to check for regex matches')
     parser.add_argument('-apply_regex', action='store_true', help='Apply regex patterns to DataFrame columns')
     parser.add_argument('-remove_missing', action='store_true', help='Remove missing values from DataFrame')
@@ -21,15 +22,9 @@ def main():
     # Load configuration
     config = load_config()
 
-    # Sample DataFrame
-    data = {
-        'A': [1, 2, None, 4, '4'],
-        'B': ['a', 'b', 'b', 'c', None],
-        'C': ['1.1', '2.2 text', '3.3', 'remove4.4', '5.5'],
-        'D': [pd.Timestamp('20230101'), pd.Timestamp('20230201'), None, pd.Timestamp('20230301'), pd.Timestamp('20230401')],
-        'E': [True, False, True, False, None]
-    }
-    df = pd.DataFrame(data)
+    # Load CSV file into DataFrame
+    file_path = args.file
+    df = pd.read_csv(file_path)
 
     # Create a DFScanner object
     scanner = DFScanner(df)
