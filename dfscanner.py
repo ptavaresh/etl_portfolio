@@ -1,6 +1,7 @@
 import pandas as pd
 import yaml
 import argparse
+import os
 from dfscanner_class import DFScanner
 
 def load_config(config_path='config.yml'):
@@ -22,9 +23,15 @@ def main():
     # Load configuration
     config = load_config()
 
+    # Ensure the file path is handled correctly
+    file_path = os.path.normpath(args.file)
+
     # Load CSV file into DataFrame
-    file_path = args.file
-    df = pd.read_csv(file_path)
+    try:
+        df = pd.read_csv(file_path)
+    except FileNotFoundError:
+        print(f"Error: The file '{file_path}' was not found.")
+        return
 
     # Create a DFScanner object
     scanner = DFScanner(df)
