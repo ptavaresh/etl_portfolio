@@ -81,22 +81,29 @@ class DFScanner:
         change_record = pd.DataFrame({'Row': [row], 'Column': [column], 'Regex Pattern': [pattern]})
         self.change_report = pd.concat([self.change_report, change_record], ignore_index=True)
 
-    def scan_values(self, patterns):
-        """
-        Scan each value in the DataFrame to check if it matches any pattern from a list of regex patterns.
 
-        Parameters:
-        patterns (list): A list of regex patterns to check against.
-
-        Returns:
-        bool: True if any value matches any pattern, False otherwise.
+    def scan_values(self, patterns: list) -> bool:
         """
-        for column in self.df.columns:
-            for value in self.df[column]:
-                if pd.notnull(value):
-                    matched, _ = self.match_regex_patterns(str(value), patterns)
-                    if matched:
-                        return True
+        This function scans the dataframe to see if any value in the dataframe 
+        matches any of the provided regex patterns. Returns True if at least 
+        one match is found, otherwise returns False.
+
+        :param patterns: List of regex patterns to search for in the dataframe.
+        :return: Boolean indicating if any match was found.
+        """
+
+        # Pre-compile all regex patterns for efficiency
+        compiled_patterns = [re.compile(pattern) for pattern in patterns]
+
+        # Iterate over columns with string-like data (e.g., object columns)
+        for column in self.df.select_dtypes(include=['object']).columns:
+            # Use vectorized string matching via str.contains for better performance
+            for pattern in compiled_patterns:
+                # Use str.contains() with any() to short-circuit when a match is found
+                if self.df[column].astype(str).str.contains(pattern, regex=True, na=False).any():
+                    return True
+
+        # If no match is found in any column
         return False
 
     def get_cleaned_data(self):
