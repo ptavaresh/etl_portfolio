@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 from collections import defaultdict
+import time  # Importing the time module
 
 class DFScanner:
     def __init__(self, df: pd.DataFrame):
@@ -91,9 +92,13 @@ class DFScanner:
         :param patterns: List of regex patterns to search for in the dataframe.
         :return: Boolean indicating if any match was found.
         """
+        
+        # Start the timer
+        start_time = time.time()
 
-        # Pre-compile all regex patterns for efficiency
-        compiled_patterns = [re.compile(pattern) for pattern in patterns]
+        # Pre-compile all regex patterns as non-capturing for efficiency
+        # This converts (pattern) to (?:pattern) to make it non-capturing
+        compiled_patterns = [re.compile(re.sub(r'\((?!\?:)', '(?:', pattern)) for pattern in patterns]
 
         # Iterate over columns with string-like data (e.g., object columns)
         for column in self.df.select_dtypes(include=['object']).columns:
@@ -101,9 +106,17 @@ class DFScanner:
             for pattern in compiled_patterns:
                 # Use str.contains() with any() to short-circuit when a match is found
                 if self.df[column].astype(str).str.contains(pattern, regex=True, na=False).any():
+                    # End the timer and calculate elapsed time
+                    end_time = time.time()
+                    execution_time = end_time - start_time
+                    print(f"scan_values executed in: {execution_time:.4f} seconds")
                     return True
 
         # If no match is found in any column
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"scan_values executed in: {execution_time:.4f} seconds")
+
         return False
 
     def get_cleaned_data(self):

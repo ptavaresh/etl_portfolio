@@ -11,5 +11,7 @@ regex_patterns:
     - 'False'  # Remove 'False' for boolean columns
 
 scan_patterns:
-  - '\d+'         # Regex to find any digit
-  - "[a-z]"       # Regex to find any lowercase letter
+  #- '\d+'         # Regex to find any digit
+  #- "[a-z]"       # Regex to find any lowercase letter
+  - "(\\d{3}|\\(\\d{3}\\))(:?\\s+|-|\\.)?(\\d{3})(:?\\s+|-|\\.)?(\\d{4})"
+  - "(\\d{3}|\\(\\d{3}\\))(:?\\s+|-|\\.)?(\\d{3})(:?\\s+|-|\\.)?(\\d{4})"
