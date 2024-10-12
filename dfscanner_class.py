@@ -119,6 +119,25 @@ class DFScanner:
 
         return False
 
+
+    def scan_and_compare_regex(self, regex_list):
+        """
+        Compares each value in the DataFrame against a list of regular expressions.
+        
+        :param df: DataFrame to scan.
+        :param regex_list: List of regular expressions.
+        :return: DataFrame of booleans where True indicates that at least one regex matched.
+        """
+        # Function to compare each value with the list of regex patterns
+        def compare_with_regex(value):
+            for regex in regex_list:
+                if re.search(regex, str(value)):  # Convert to string in case of numeric values
+                    return True
+            return False
+        
+        # Apply the comparison function to each value in the DataFrame
+        return self.df.applymap(compare_with_regex)
+
     def get_cleaned_data(self):
         return self.df
 

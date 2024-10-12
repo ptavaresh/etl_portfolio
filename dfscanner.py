@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description='Process a DataFrame using DFScanner.')
     parser.add_argument('-file', required=True, help='Path to the CSV file to load into DataFrame')
     parser.add_argument('-scan', action='store_true', help='Run scan_values function to check for regex matches')
+    parser.add_argument('-scan2', action='store_true', help='Run scan_values function to check for regex matches')
     parser.add_argument('-apply_regex', action='store_true', help='Apply regex patterns to DataFrame columns')
     parser.add_argument('-remove_missing', action='store_true', help='Remove missing values from DataFrame')
     parser.add_argument('-remove_duplicates', action='store_true', help='Remove duplicate rows from DataFrame')
@@ -40,6 +41,11 @@ def main():
     if args.scan:
         new_regex_patterns = config['scan_patterns']  # Load scan patterns from config
         matches_found = scanner.scan_values(new_regex_patterns)
+        print("Matches found:", matches_found)
+
+    if args.scan2:
+        new_regex_patterns = config['scan_patterns']  # Load scan patterns from config
+        matches_found = scanner.scan_and_compare_regex(new_regex_patterns)
         print("Matches found:", matches_found)
 
     if args.apply_regex:
