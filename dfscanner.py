@@ -15,6 +15,7 @@ def main():
     parser.add_argument('-file', required=True, help='Path to the CSV file to load into DataFrame')
     parser.add_argument('-scan', action='store_true', help='Run scan_values function to check for regex matches')
     parser.add_argument('-scan2', action='store_true', help='Run scan_values function to check for regex matches')
+    parser.add_argument('-isclean', action='store_true', help='Run scan_values function to check for regex matches')
     parser.add_argument('-apply_regex', action='store_true', help='Apply regex patterns to DataFrame columns')
     parser.add_argument('-remove_missing', action='store_true', help='Remove missing values from DataFrame')
     parser.add_argument('-remove_duplicates', action='store_true', help='Remove duplicate rows from DataFrame')
@@ -47,6 +48,11 @@ def main():
         new_regex_patterns = config['scan_patterns']  # Load scan patterns from config
         matches_found = scanner.scan_and_compare_regex(new_regex_patterns)
         print("Matches found:", matches_found)
+
+    if args.isclean:
+        new_regex_patterns = config['scan_patterns']  # Load scan patterns from config
+        is_clean = scanner.is_dataframe_clean(new_regex_patterns)
+        print("Dataframe is clean:", is_clean)
 
     if args.apply_regex:
         regex_patterns = config['regex_patterns']
