@@ -159,6 +159,29 @@ class DFScanner:
         # Apply the regex matching function to the entire DataFrame and check if any value matches
         return not self.df.applymap(match_any_regex).any().any()
 
+    def is_dataframe_clean2(self, regex_list):
+        """
+        Checks if the DataFrame is clean or dirty based on regex matching.
+
+        A DataFrame is considered 'dirty' if any value matches any regex in the list.
+        It's considered 'clean' if none of the values match any of the regex patterns.
+
+        :param df: DataFrame to scan.
+        :param regex_list: List of regular expressions.
+        :return: True if the DataFrame is clean (no matches), False if dirty (at least one match).
+        """
+        # Convert capturing groups in regex to non-capturing groups (avoids warnings)
+        non_capturing_regex_list = [re.sub(r'\((?!\?)', '(?:', regex) for regex in regex_list]
+        
+        # Combine all regex patterns into one string with OR operator
+        combined_pattern = '|'.join(non_capturing_regex_list)
+        
+        # Apply the regex to the entire DataFrame and check for any match
+        mask = self.df.astype(str).apply(lambda col: col.str.contains(combined_pattern, regex=True, na=False))
+        
+        # If any value matches, the DataFrame is dirty, otherwise it's clean
+        return not mask.any().any()
+
     def get_cleaned_data(self):
         return self.df
 
